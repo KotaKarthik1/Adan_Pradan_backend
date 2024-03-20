@@ -4,18 +4,11 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
 const mongoose = require("mongoose");
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> d24fbbfe32f46262b8a6a678c73479c7c47c7841
-const stdpostsRouter = require("./StudentData");
-const postsRouter = require("./CollegesData");
+// const stdpostsRouter = require("./StudentData");
+// const postsRouter = require("./CollegesData");
 
 const port = 5031;
-const conn_str =
-    "mongodb+srv://Adan:Pradan@adanpradan.thgia56.mongodb.net/Backend?retryWrites=true&w=majority";
-<<<<<<< HEAD
-=======
+const conn_str ="mongodb+srv://Adan:Pradan@adanpradan.thgia56.mongodb.net/Backend?retryWrites=true&w=majority";
 const studentsRoute = require("./routes/StudentAuth")
 const collegesRoute = require("./routes/CollegeAuth");
 const workshopRoute = require("./routes/CollegeWorkshops");
@@ -25,12 +18,6 @@ const studentdata=require("./routes/StudentData");
 // const imageRoute=require("./routes/imageData");
 require('dotenv').config();
 
-
-const port =process.env.PORT || 4000;
-const conn_str =process.env.DATABASE_URL;
->>>>>>> 456fac9 (nth commit)
-=======
->>>>>>> d24fbbfe32f46262b8a6a678c73479c7c47c7841
 mongoose.connect(
     conn_str,
     {
@@ -51,12 +38,8 @@ app.use(logger("dev"));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> d24fbbfe32f46262b8a6a678c73479c7c47c7841
-app.use("/AdanPradan", postsRouter);
-app.use("/AdanPradan", stdpostsRouter);
+// app.use("/AdanPradan", postsRouter);
+// app.use("/AdanPradan", stdpostsRouter);
 
 app.use((err, req, res, next) => {
   if (res.headersSent) {
@@ -65,8 +48,6 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.json({ error: err.message });
 });
-<<<<<<< HEAD
-=======
 app.use("/AdanPradan", collegesRoute);
 app.use("/AdanPradan", studentsRoute);
 app.use("/AdanPradan",workshopRoute);
@@ -82,9 +63,6 @@ app.use("/AdanPradan",studentdata);
 //   res.status(err.status || 500);
 //   res.json({ error: err.message });
 // });
->>>>>>> 456fac9 (nth commit)
-=======
->>>>>>> d24fbbfe32f46262b8a6a678c73479c7c47c7841
 
 app.listen(port, function () {
     console.log("Runnning on " + port);

@@ -80,23 +80,24 @@ router.put("/std/:postId", async (req, res) => {
     });
   }
 });
-// router.get("/std/list/:id", async (req, res) => {
-//   try {
-//     let post = await Post.findOne({
-//       _id: req.params.id,
-//       // username: req.params.username,
-//     });
-//     res.status(200).json({
-//       status: 200,
-//       data: post,
-//     });
-//   } catch (err) {
-//     res.status(400).json({
-//       status: 400,
-//       message: err.message,
-//     });
-//   }
-// });
+router.get("/std/list/:id", async (req, res) => {
+  try {
+    let post = await Post.findOne({
+      _id: req.params.id,
+      // username: req.params.username,
+    });
+    res.status(200).json({
+      status: 200,
+      data: post,
+    });
+    // consolelog()
+  } catch (err) {
+    res.status(400).json({
+      status: 400,
+      message: err.message,
+    });
+  }
+});
 router.delete("/std/:postId", async (req, res) => {
   try {
     let post = await Post.findByIdAndRemove(req.params.postId);

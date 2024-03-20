@@ -56,6 +56,7 @@ router.post("/addworkshops", async (req, res) => {
 
 router.get("/fullclgdata", async (req, res) => {
   // console.log(workshops);
+  const today = new Date();
   const aggregatePipeline = [
     {
       $lookup: {
@@ -67,6 +68,11 @@ router.get("/fullclgdata", async (req, res) => {
     },
     {
       $unwind: "$workshopDetails",
+    },
+    {
+      $match: {
+        "workshopDetails.workshopDate": { $gte: today }, // Filter workshops with date greater than or equal to today
+      },
     },
     {
       $project: {
@@ -92,15 +98,10 @@ router.get("/fullclgdata", async (req, res) => {
   });
 });
 router.get("/workshopsforclg/:userid", async (req, res) => {
-  // const id = req.params.userid;
-  // Assuming yourStringId is the string representation of ObjectID
-
-  // Now, objectId is an instance of ObjectId and can be used in Mongoose queries
-
-  
-  const Name = await ClgInfo.findOne({ _id: req.params.userid});
+  const Name = await ClgInfo.findOne({ _id: req.params.userid });
   const collegeName = Name.collegeName;
 
+  const currentDate = new Date(); // Get the current date
   const aggregatePipeline = [
     {
       $lookup: {
@@ -116,11 +117,13 @@ router.get("/workshopsforclg/:userid", async (req, res) => {
     {
       $match: {
         collegeName: collegeName, // Match the college name from the request
+        "workshopDetails.workshopDate": { $gte: currentDate }, // Filter workshops with date greater than or equal to current date
       },
     },
     {
       $project: {
         collegeName: 1, // Include collegeName from ClgInfo
+        workshop_id: "$workshopDetails._id", // Add workshop_id field with the ID of the workshop
         workshopTitle: "$workshopDetails.workshopTitle", // Include workshopTitle from Workshop
         workshopSeats: "$workshopDetails.workshopSeats",
         workshopDate: "$workshopDetails.workshopDate",
@@ -137,9 +140,37 @@ router.get("/workshopsforclg/:userid", async (req, res) => {
     } else {
       res.json(result);
       console.log(result);
-      // result will contain documents with collegeName and workshopTitle
+      // result will contain documents with collegeName, workshop_id, and workshopTitle
     }
   });
 });
+// Update the route to accept workshopId and userId as parameters
+router.delete("/deleteworkshops", async (req, res) => {
+  const { workshopId, userId } = req.body;
+  console.log(workshopId);
+  console.log(userId);
+  try {
+    // Find the CollegeData document by userId
+    WorkshopData.findOneAndDelete({ _id: workshopId })
+  .then(async (deletedWorkshop) => {
+    if (!deletedWorkshop) {
+      return res.status(404).json({ message: 'Workshop not found' });
+    }
+
+    // Update CollegeData's workshops array
+    await ClgInfo.findOneAndUpdate(
+      { _id: deletedWorkshop.college },
+      { $pull: { workshops: deletedWorkshop._id } }
+    );
+
+    res.status(200).json({ message: 'Workshop deleted successfully' });
+  })
+  } catch (error) {
+    console.error('Error deleting workshop:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
 
 module.exports = router;
