@@ -6,9 +6,9 @@ const logger = require("morgan");
 const mongoose = require("mongoose");
 // const stdpostsRouter = require("./StudentData");
 // const postsRouter = require("./CollegesData");
+const port = process.env.PORT ||5031;
+const conn_str =process.env.DATABASE_URL;
 
-const port = 5031;
-const conn_str ="mongodb+srv://Adan:Pradan@adanpradan.thgia56.mongodb.net/Backend?retryWrites=true&w=majority";
 const studentsRoute = require("./routes/StudentAuth")
 const collegesRoute = require("./routes/CollegeAuth");
 const workshopRoute = require("./routes/CollegeWorkshops");
