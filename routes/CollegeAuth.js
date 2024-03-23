@@ -53,7 +53,57 @@ router.post("/registerclg", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+router.patch("/clg/updatepassword/:user_id",async(req,res)=>
+{
+  const { prevPassword, newPassword } = req.body;
+    try{
+      const userdata = await PersonalInfo.findById(req.params.user_id);
+      const user=await User.findById(userdata.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
+    // Compare previous password with the stored password
+    const isMatch = await bcrypt.compare(prevPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect previous password" });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the password
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+    }
+    catch(err)
+    {
+      res.status(400).send('Update failed password');
+    }
+})
+router.patch("/clg/updateemail/:user_id",async(req,res)=>
+{
+  const { email } = req.body;
+    try{
+      const userdata = await PersonalInfo.findById(req.params.user_id);
+      const user=await User.findById(userdata.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // Update the password
+    user.email = email;
+    await user.save();
+
+    res.status(200).json({ message: "email updated successfully" });
+    }
+    catch(err)
+    {
+      res.status(400).send('Update failed email');
+    }
+
+})
 // Login route
 router.post("/loginclg", async (req, res) => {
   try {

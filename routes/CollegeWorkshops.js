@@ -57,6 +57,10 @@ router.post("/addworkshops", async (req, res) => {
 router.get("/fullclgdata", async (req, res) => {
   // console.log(workshops);
   const today = new Date();
+  const formattedDate2 = `${today.getFullYear()}-${(today.getMonth() + 1 + '').padStart(2, '0')}-${(today.getDate() + '').padStart(2, '0')}T00:00:00.000Z`;
+console.log(formattedDate2);
+  console.log(today);
+  
   const aggregatePipeline = [
     {
       $lookup: {
@@ -69,9 +73,9 @@ router.get("/fullclgdata", async (req, res) => {
     {
       $unwind: "$workshopDetails",
     },
-    {
+    { 
       $match: {
-        "workshopDetails.workshopDate": { $gte: today }, // Filter workshops with date greater than or equal to today
+        "workshopDetails.workshopDate": { $gte: new Date(formattedDate2) }, // Filter workshops with date greater than or equal to today
       },
     },
     {
@@ -100,8 +104,10 @@ router.get("/fullclgdata", async (req, res) => {
 router.get("/workshopsforclg/:userid", async (req, res) => {
   const Name = await ClgInfo.findOne({ _id: req.params.userid });
   const collegeName = Name.collegeName;
-
   const currentDate = new Date(); // Get the current date
+  const today = new Date();
+  const formattedDate2 = `${today.getFullYear()}-${(today.getMonth() + 1 + '').padStart(2, '0')}-${(today.getDate() + '').padStart(2, '0')}T00:00:00.000Z`;
+console.log(formattedDate2);
   const aggregatePipeline = [
     {
       $lookup: {
@@ -117,7 +123,7 @@ router.get("/workshopsforclg/:userid", async (req, res) => {
     {
       $match: {
         collegeName: collegeName, // Match the college name from the request
-        "workshopDetails.workshopDate": { $gte: currentDate }, // Filter workshops with date greater than or equal to current date
+        "workshopDetails.workshopDate": { $gte: new Date(formattedDate2) }, // Filter workshops with date greater than or equal to current date
       },
     },
     {
