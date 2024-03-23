@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const User = require("C:/react/Backend/models/CollegeUserModel.js");
-const PersonalInfo = require("C:/react/Backend/models/CollegeModel.js");
+const User = require("../models/CollegeUserModel.js");
+const PersonalInfo = require("../models/CollegeModel.js");
 const jwt = require("jsonwebtoken"); 
-const Workshop = require("C:/react/Backend/models/WorkshopModel.js");
+const Workshop = require("../models/WorkshopModel.js");
 
 
 

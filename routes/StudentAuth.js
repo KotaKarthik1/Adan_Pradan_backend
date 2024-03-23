@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const User = require("C:/react/Backend/models/StudentUserModel.js");
-const PersonalInfo = require("C:/react/Backend/models/StudentModel.js");
+const User = require("../models/StudentUserModel");
+const PersonalInfo = require("../models/StudentModel.js");
 const jwt = require("jsonwebtoken"); // Import JWT library
 // const requireAuth = require("./routes/Middleware");
 
