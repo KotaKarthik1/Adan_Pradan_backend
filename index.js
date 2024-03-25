@@ -7,8 +7,8 @@ const mongoose = require("mongoose");
 // const stdpostsRouter = require("./StudentData");
 // const postsRouter = require("./CollegesData");
 const port = process.env.PORT ||5031;
-const conn_str =process.env.DATABASE_URL;
-
+// const conn_str =process.env.DATABASE_URL;
+// console.log(conn_str);
 const studentsRoute = require("./routes/StudentAuth")
 const collegesRoute = require("./routes/CollegeAuth");
 const workshopRoute = require("./routes/CollegeWorkshops");
@@ -19,14 +19,14 @@ const studentdata=require("./routes/StudentData");
 require('dotenv').config();
 
 mongoose.connect(
-    conn_str,
+    process.env.DATABASE_URL,
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     },
     (err) => {
         if (err) {
-            console.log("error in connection");
+            console.log("error in connection",err);
         } else {
             console.log("MONGDB is connected");
         }

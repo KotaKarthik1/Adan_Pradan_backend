@@ -219,4 +219,124 @@ const workshopstosend = await BookingData.aggregate([
     res.status(500).send(error.toString());
   }
 });
+
+router.get("/bookingsfilterbydate", async (req, res) => {
+  try {
+    console.log("em roo");
+    console.log(req.query);
+    // const id=req.params.id;
+    const { id, checkdate } = req.query;
+    // const checkdate=req.params.checkdate;
+    console.log(id,checkdate);
+    const AllBookedDetails = await BookingData.find({ collegeId: id, Date: new Date(checkdate) });
+    console.log(AllBookedDetails);
+    if(AllBookedDetails)
+    {
+      // const userIds = AllBookedDetails.map(booking => booking.user);
+      // const users = await studentdata.find({ _id: { $in: userIds } });
+      // console.log(users);
+      // return res.status(200).json(AllBookedDetails);
+      const workshops = {};
+          await Promise.all(AllBookedDetails.map(async (booking) => {
+            if (!workshops[booking.workshopTitle]) {
+              workshops[booking.workshopTitle] = [];
+            }
+            const user = await studentdata.findOne({ _id: booking.user });
+            workshops[booking.workshopTitle].push({
+              user:user.name,
+              studentclgName: user.collegeName,
+              Date: booking.Date,
+              slotTime: booking.slotTime
+            });
+          }));
+          console.log(workshops);
+          return res.status(200).json(workshops);
+    }
+
+    return res.status(400).json(message="em lev saami");
+  } catch {
+    // next(err);
+    res.status(500).json({ error: "cannot find the details by that date" });
+  }
+});
+
+router.get('/bookingsfilterbydatepast',async(req,res)=>
+{
+  try{
+    console.log(req.query);
+    // const id=req.params.id;
+    const { id, checkdate } = req.query;
+    // const checkdate=req.params.checkdate;
+    console.log(id,checkdate);
+    const AllBookedDetails = await BookingData.find({ collegeId: id, Date: { $lt: new Date(checkdate) } });
+    console.log(AllBookedDetails);
+    if(AllBookedDetails)
+    {
+      // const userIds = AllBookedDetails.map(booking => booking.user);
+      // const users = await studentdata.find({ _id: { $in: userIds } });
+      // console.log(users);
+      // return res.status(200).json(AllBookedDetails);
+      const datesfilteredbookings = {};
+          await Promise.all(AllBookedDetails.map(async (booking) => {
+            if (!datesfilteredbookings[booking.Date]) {
+              datesfilteredbookings[booking.Date] = [];
+            }
+            const user = await studentdata.findOne({ _id: booking.user });
+            datesfilteredbookings[booking.Date].push({
+              user:user.name,
+              studentclgName: user.collegeName,
+              Date: booking.workshopTitle,
+              slotTime: booking.slotTime
+            });
+          }));
+          console.log(datesfilteredbookings);
+          return res.status(200).json(datesfilteredbookings);
+    }
+
+    return res.status(400).json(message="no bookings found");
+  } catch {
+    // next(err);
+    res.status(500).json({ error: "error occured at backend" });
+  }
+});
+router.get('/bookingsfilterbydateupcoming',async(req,res)=>
+{
+  try{
+    console.log(req.query);
+    // const id=req.params.id;
+    const { id, checkdate } = req.query;
+    // const checkdate=req.params.checkdate;
+    console.log(id,checkdate);
+    const AllBookedDetails = await BookingData.find({ collegeId: id, Date: { $gte: new Date(checkdate) } });
+    console.log(AllBookedDetails);
+    if(AllBookedDetails)
+    {
+      // const userIds = AllBookedDetails.map(booking => booking.user);
+      // const users = await studentdata.find({ _id: { $in: userIds } });
+      // console.log(users);
+      // return res.status(200).json(AllBookedDetails);
+      const datesfilteredbookings = {};
+          await Promise.all(AllBookedDetails.map(async (booking) => {
+            if (!datesfilteredbookings[booking.Date]) {
+              datesfilteredbookings[booking.Date] = [];
+            }
+            const user = await studentdata.findOne({ _id: booking.user });
+            datesfilteredbookings[booking.Date].push({
+              user:user.name,
+              studentclgName: user.collegeName,
+              Date: booking.workshopTitle,
+              slotTime: booking.slotTime
+            });
+          }));
+          console.log(datesfilteredbookings);
+          return res.status(200).json(datesfilteredbookings);
+    }
+
+    return res.status(400).json(message="no bookings found");
+  } catch {
+    // next(err);
+    res.status(500).json({ error: "error occured at backend" });
+  }
+});
+
 module.exports = router;
