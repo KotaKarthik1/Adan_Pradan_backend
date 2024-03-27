@@ -178,21 +178,60 @@ console.log(formattedDate2);
 //   }
 // });
 
+// router.delete("/deleteworkshops", async (req, res) => {
+//   const { workshopId, userId } = req.body;
+//   console.log(workshopId);
+//   console.log(userId);
+//   try {
+//     // Find the deleted workshop
+//     const clgdetail=await ClgInfo.findOne({_id:userId});
+//     console.log(clgdetail," is clg detail");
+
+//     const deletedWorkshop = await WorkshopData.findOneAndDelete({ _id: workshopId });
+//     // console.log(deletedWorkshop);
+//     if (!deletedWorkshop) {
+//       return res.status(404).json({ message: 'Workshop not found' });
+//     }
+//     console.log(deletedWorkshop," is workshop");
+//     // Find bookings that match the deleted workshop's information
+//     const date = new Date(deletedWorkshop.workshopDate);
+//     date.setDate(date.getDate());
+//     const formattedDate2 = `${date.getFullYear()}-${(date.getMonth() + 1 + '').padStart(2, '0')}-${(date.getDate() + '').padStart(2, '0')}T00:00:00.000Z`;
+//     console.log(formattedDate2);
+//     const matchingBookings = await BookingData.find({
+//       // workshop_id: workshopId,
+//       workshopTitle: deletedWorkshop.workshopTitle,
+//       Date: new Date(formattedDate2),
+//       collegeName:clgdetail.collegeName
+//     });
+//     console.log(matchingBookings);
+//     // Extract user_ids from matching bookings
+//     const userIds = matchingBookings.map(booking => booking._id);
+// const deletebookings = await BookingData.deleteMany({ _id: { $in: userIds } });
+    
+//     // Return the array of user_ids
+//     console.log(userIds);
+//     res.status(200).json({ deletedWorkshops: deletebookings, message: 'Workshop deleted successfully' });
+//   } catch (error) {
+//     console.error('Error deleting workshop:', error);
+//     res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// });
 router.delete("/deleteworkshops", async (req, res) => {
   const { workshopId, userId } = req.body;
   console.log(workshopId);
   console.log(userId);
   try {
     // Find the deleted workshop
-    const clgdetail=await ClgInfo.findOne({_id:userId});
-    console.log(clgdetail," is clg detail");
+    const clgdetail = await ClgInfo.findOne({ _id: userId });
+    console.log(clgdetail, " is clg detail");
 
     const deletedWorkshop = await WorkshopData.findOneAndDelete({ _id: workshopId });
     // console.log(deletedWorkshop);
     if (!deletedWorkshop) {
       return res.status(404).json({ message: 'Workshop not found' });
     }
-    console.log(deletedWorkshop," is workshop");
+    console.log(deletedWorkshop, " is workshop");
     // Find bookings that match the deleted workshop's information
     const date = new Date(deletedWorkshop.workshopDate);
     date.setDate(date.getDate());
@@ -202,18 +241,41 @@ router.delete("/deleteworkshops", async (req, res) => {
       // workshop_id: workshopId,
       workshopTitle: deletedWorkshop.workshopTitle,
       Date: new Date(formattedDate2),
-      collegeName:clgdetail.collegeName
+      collegeName: clgdetail.collegeName
     });
     console.log(matchingBookings);
     // Extract user_ids from matching bookings
     const userIds = matchingBookings.map(booking => booking._id);
-const deletebookings = await BookingData.deleteMany({ _id: { $in: userIds } });
+    const deletebookings = await BookingData.deleteMany({ _id: { $in: userIds } });
+
+    // Update college data to remove the deleted workshop from the workshops array
+    await ClgInfo.findOneAndUpdate({ _id: userId }, { $pull: { workshops: workshopId } });
 
     // Return the array of user_ids
     console.log(userIds);
     res.status(200).json({ deletedWorkshops: deletebookings, message: 'Workshop deleted successfully' });
   } catch (error) {
     console.error('Error deleting workshop:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+router.delete("/pullallworkshops/", async (req, res) => {
+  const collegeId = req.body.collegeId;
+  console.log(collegeId);
+  try {
+    // Find the college by ID
+    const college = await ClgInfo.findOne({ _id: collegeId });
+    if (!college) {
+      return res.status(404).json({ message: 'College not found' });
+    }
+
+    // Update the college's workshops array to an empty array
+    college.workshops = [];
+    await college.save();
+
+    res.status(200).json({ message: 'All workshops deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting workshops:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
