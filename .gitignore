@@ -17,15 +17,8 @@
 .env.development.local
 .env.test.local
 .env.production.local
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
-.env
->>>>>>> 456fac9 (nth commit)
-=======
-
->>>>>>> d24fbbfe32f46262b8a6a678c73479c7c47c7841
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+node_modules
