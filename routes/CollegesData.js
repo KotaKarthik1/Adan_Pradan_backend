@@ -14,7 +14,7 @@ router.get("/colleges", async (req, res, next) => {
 router.get("/colleges/list", async (req, res) => {
   try {
     let post = await collegeData.find();
-    console.log(post);
+    // console.log(post);
     res.status(200).json({
       status: 200,
       post,

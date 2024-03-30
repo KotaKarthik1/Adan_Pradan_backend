@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const User = require("../models/StudentUserModel");
 const PersonalInfo = require("../models/StudentModel.js");
 const jwt = require("jsonwebtoken"); // Import JWT library
-// const requireAuth = require("./routes/Middleware");
 
 router.post("/register", async (req, res) => {
     try {
@@ -23,7 +22,7 @@ router.post("/register", async (req, res) => {
       // create a new user
       const user = new User({ email, password: hashedPassword });
       await user.save();
-      console.log(user._id, name, collegeName);
+      // console.log(user._id, name, collegeName);
       const PersonalInfoData = new PersonalInfo({
         userId: user._id,
         name,

@@ -5,7 +5,7 @@ const requireAuth = async (req, res, next) => {
   const secretKey = process.env.JWT_SECRET;
 
   const authHeader = req.header('Authorization');
-  console.log(authHeader);
+  // console.log(authHeader);
 
   if (!authHeader) {
     console.log("error in auth");

@@ -8,13 +8,8 @@ router.post("/bookWorkshop", async (req, res) => {
   try {
     const { user, collegeName, workshopTitle, Date, slotTime, collegeId } =
       req.body;
-    console.log(req.body);
+    // console.log(req.body);
     const workshop_id = req.body.workshopid;
-    console.log(user);
-    console.log(collegeName);
-    console.log(workshopTitle);
-    console.log(Date);
-    console.log(workshop_id, " is workshop id");
     const existingBooking = await BookingData.findOne({
       user,
       collegeId,
@@ -33,7 +28,7 @@ router.post("/bookWorkshop", async (req, res) => {
     const workshop = await WorkshopData.findOne({
       _id: workshop_id,
     });
-    console.log(workshop);
+    // console.log(workshop);
     if (workshop.workshopDate.toISOString().split("T")[0] != Date) {
       console.log("Dates do not match");
       return res
@@ -59,7 +54,7 @@ router.post("/bookWorkshop", async (req, res) => {
 
     // Save the updated workshop document
     await workshop.save();
-    console.log(workshop);
+    // console.log(workshop);
     const newBooking = new BookingData({
       user,
       collegeName,
@@ -71,7 +66,7 @@ router.post("/bookWorkshop", async (req, res) => {
     });
 
     await newBooking.save();
-    console.log(newBooking);
+    // console.log(newBooking);
 
     res.status(201).json({ message: "Booking successful" });
   } catch (error) {
@@ -79,14 +74,11 @@ router.post("/bookWorkshop", async (req, res) => {
     res.status(500).json({ message: "Error booking workshop" });
   }
 });
-// router.get("/bookWorkshop/bookingid", async(req, res)=>{
-//   // const workshop=
 
-// });
 router.get("/userbooked/:id", async (req, res) => {
   try {
     const bookedByUser = await BookingData.find({ user: req.params.id });
-    console.log(bookedByUser);
+    // console.log(bookedByUser);
     res.json(bookedByUser);
   } catch {
     // next(err);
@@ -98,7 +90,7 @@ router.get("/collegebooked/:id", async (req, res) => {
     console.log(req.params.id);
     const Name = await collegeData.findOne({ _id: req.params.id });
     const collegeName = Name.collegeName;
-    console.log(collegeName);
+    // console.log(collegeName);
     // res.json(bookingsForCollege);
 
     const workshopstosend = await BookingData.aggregate([
@@ -123,7 +115,7 @@ router.get("/collegebooked/:id", async (req, res) => {
       },
     ]);
     // console.log(workshopstosend.studentdetails);
-    console.log(workshopstosend);
+    // console.log(workshopstosend);
     if (workshopstosend.length == 0) {
       return res
         .status(404)
@@ -158,7 +150,7 @@ router.get("/collegebooked/todaylist/:id", async (req, res) => {
     const date = new Date();
 date.setDate(date.getDate());
 const formattedDate2 = `${date.getFullYear()}-${(date.getMonth() + 1 + '').padStart(2, '0')}-${(date.getDate() + '').padStart(2, '0')}T00:00:00.000Z`;
-console.log(formattedDate2);
+// console.log(formattedDate2);
 const Name = await collegeData.findOne({ _id: req.params.id });
 const collegeName = Name.collegeName;
 
@@ -186,19 +178,6 @@ const workshopstosend = await BookingData.aggregate([
   },
 ]);
 
-// const newArray = workshopstosend.map(item => ({
-//   heading: `${item._id} - ${new Date(item.Date).toDateString()}`,
-//   workshops: item.workshops.map(workshop => ({
-//     workshopName: workshop.workshopTitle,
-//     date: new Date(workshop.Date).toDateString(),
-//     students: item.studentdetails.map(student => ({
-//       name: student.name,
-//       collegeName: student.collegeName
-//     }))
-//   }))
-// }));
-
-    // console.log(filteredWorkshops);
     const convertedData = workshopstosend.map((workshop) => ({
       _id: workshop._id,
       date: workshop.Date,
@@ -222,20 +201,13 @@ const workshopstosend = await BookingData.aggregate([
 
 router.get("/bookingsfilterbydate", async (req, res) => {
   try {
-    console.log("em roo");
-    console.log(req.query);
-    // const id=req.params.id;
+    // console.log(req.query);
+
     const { id, checkdate } = req.query;
-    // const checkdate=req.params.checkdate;
-    console.log(id,checkdate);
     const AllBookedDetails = await BookingData.find({ collegeId: id, Date: new Date(checkdate) });
-    console.log(AllBookedDetails);
+    // console.log(AllBookedDetails);
     if(AllBookedDetails)
     {
-      // const userIds = AllBookedDetails.map(booking => booking.user);
-      // const users = await studentdata.find({ _id: { $in: userIds } });
-      // console.log(users);
-      // return res.status(200).json(AllBookedDetails);
       const workshops = {};
           await Promise.all(AllBookedDetails.map(async (booking) => {
             if (!workshops[booking.workshopTitle]) {
@@ -249,7 +221,7 @@ router.get("/bookingsfilterbydate", async (req, res) => {
               slotTime: booking.slotTime
             });
           }));
-          console.log(workshops);
+          // console.log(workshops);
           return res.status(200).json(workshops);
     }
 
@@ -263,19 +235,12 @@ router.get("/bookingsfilterbydate", async (req, res) => {
 router.get('/bookingsfilterbydatepast',async(req,res)=>
 {
   try{
-    console.log(req.query);
-    // const id=req.params.id;
+    // console.log(req.query);
     const { id, checkdate } = req.query;
-    // const checkdate=req.params.checkdate;
-    console.log(id,checkdate);
+
     const AllBookedDetails = await BookingData.find({ collegeId: id, Date: { $lt: new Date(checkdate) } });
-    console.log(AllBookedDetails);
     if(AllBookedDetails)
     {
-      // const userIds = AllBookedDetails.map(booking => booking.user);
-      // const users = await studentdata.find({ _id: { $in: userIds } });
-      // console.log(users);
-      // return res.status(200).json(AllBookedDetails);
       const datesfilteredbookings = {};
           await Promise.all(AllBookedDetails.map(async (booking) => {
             if (!datesfilteredbookings[booking.Date]) {
@@ -285,11 +250,11 @@ router.get('/bookingsfilterbydatepast',async(req,res)=>
             datesfilteredbookings[booking.Date].push({
               user:user.name,
               studentclgName: user.collegeName,
-              Date: booking.workshopTitle,
+              workshopTitle: booking.workshopTitle,
               slotTime: booking.slotTime
             });
           }));
-          console.log(datesfilteredbookings);
+          // console.log(datesfilteredbookings);
           return res.status(200).json(datesfilteredbookings);
     }
 
@@ -302,19 +267,11 @@ router.get('/bookingsfilterbydatepast',async(req,res)=>
 router.get('/bookingsfilterbydateupcoming',async(req,res)=>
 {
   try{
-    console.log(req.query);
-    // const id=req.params.id;
+    // console.log(req.query);
     const { id, checkdate } = req.query;
-    // const checkdate=req.params.checkdate;
-    console.log(id,checkdate);
     const AllBookedDetails = await BookingData.find({ collegeId: id, Date: { $gte: new Date(checkdate) } });
-    console.log(AllBookedDetails);
     if(AllBookedDetails)
     {
-      // const userIds = AllBookedDetails.map(booking => booking.user);
-      // const users = await studentdata.find({ _id: { $in: userIds } });
-      // console.log(users);
-      // return res.status(200).json(AllBookedDetails);
       const datesfilteredbookings = {};
           await Promise.all(AllBookedDetails.map(async (booking) => {
             if (!datesfilteredbookings[booking.Date]) {
@@ -324,11 +281,11 @@ router.get('/bookingsfilterbydateupcoming',async(req,res)=>
             datesfilteredbookings[booking.Date].push({
               user:user.name,
               studentclgName: user.collegeName,
-              Date: booking.workshopTitle,
+              workshopTitle: booking.workshopTitle,
               slotTime: booking.slotTime
             });
           }));
-          console.log(datesfilteredbookings);
+          // console.log(datesfilteredbookings);
           return res.status(200).json(datesfilteredbookings);
     }
 

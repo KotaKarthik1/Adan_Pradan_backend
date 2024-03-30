@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const User = require("../models/CollegeUserModel.js");
 const PersonalInfo = require("../models/CollegeModel.js");
 const jwt = require("jsonwebtoken"); 
-const Workshop = require("../models/WorkshopModel.js");
 
 
 

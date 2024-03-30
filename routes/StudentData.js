@@ -35,13 +35,13 @@ router.get("/std/list", async (req, res) => {
 
 router.get("/std/:postId", async (req, res) => {
   try {
-    console.log(req.params.postId);
+    // console.log(req.params.postId);
     let post = await Post.findOne({
       _id: req.params.postId,
       // username: req.params.username,
     });
     if (post) { 
-      console.log(post);
+      // console.log(post);
       return res.status(200).json({
         status: 200,
         post,
